@@ -23,32 +23,32 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/profiles")
 @RequiredArgsConstructor
 public class PlayerProfileController {
-    
-    private final PlayerProfileService playerProfileService;
 
-    @GetMapping
+	private final PlayerProfileService playerProfileService;
+
+	@GetMapping
 	public List<PlayerProfile> allPlayerProfiles() {
-		return playerProfileService.allPlayerProfiles();	    
+		return playerProfileService.allPlayerProfiles();
 	}
 
 	@GetMapping("/{id}")
-	public PlayerProfile getPlayerProfile(@PathVariable int id) throws NotFoundException{
+	public PlayerProfile getPlayerProfile(@PathVariable int id) throws NotFoundException {
 		return playerProfileService.getPlayerProfile(id);
 	}
-	
-    @PostMapping
+
+	@PostMapping
 	public PlayerProfile addPlayerProfile(@RequestBody PlayerProfile playerProfile) {
-    	return playerProfileService.addPlayerProfile(playerProfile);
-	}
-    
- 	@DeleteMapping("/{id}")
-	public void deletePlayerProfile(@PathVariable int id) {
-		playerProfileService.deletePlayerProfile(id);
+		return playerProfileService.addPlayerProfile(playerProfile);
 	}
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException notFoundException) {
-        return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.NOT_FOUND);
+	@DeleteMapping("/{id}")
+    public void deletePlayerProfile(@PathVariable int id) throws NotFoundException {
+        playerProfileService.deletePlayerProfile(id);
     }
+
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<String> handleNotFoundException(NotFoundException notFoundException) {
+		return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.NOT_FOUND);
+	}
 
 }

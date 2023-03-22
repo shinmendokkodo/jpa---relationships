@@ -1,6 +1,7 @@
 package com.shinmen.relationships.onetoone.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,29 @@ public class PlayerService {
     }
 
     public Player getPlayer(int id) throws NotFoundException {
-        return playerRepository.findById(id).orElseThrow(() -> new NotFoundException("Player not found"));
+        Optional<Player> optionalPlayer = playerRepository.findById(id);
+
+        if (optionalPlayer.isPresent()) {
+            return optionalPlayer.get();
+        } else {
+            throw new NotFoundException("Player not found");
+        }
     }
 
     public Player addPlayer(Player player) {
         player.setId(0);
+
+        // Check if player contains nested profile
+        if (player.getPlayerProfile() != null) {
+            // Ensure the profile is not already associated with another player
+            if (player.getPlayerProfile().getPlayer() != null) {
+                throw new IllegalStateException("The profile is already associated with a player");
+            }
+
+            // Set the bidirectional relationship
+            player.getPlayerProfile().setPlayer(player);
+        }
+
         return playerRepository.save(player);
     }
 
@@ -35,8 +54,16 @@ public class PlayerService {
     }
 
     public Player assignProfile(int id, PlayerProfile profile) throws NotFoundException {
-        Player player = playerRepository.findById(id).orElseThrow(() -> new NotFoundException("Player not found"));
+        Player player = getPlayer(id); // Reuse the getPlayer method to fetch the player
+
+        if (profile.getPlayer() != null) {
+            throw new IllegalStateException("The profile is already associated with a player");
+        }
+
         player.setPlayerProfile(profile);
+        // Bi-directional relationship
+        profile.setPlayer(player);
+
         return playerRepository.save(player);
     }
 

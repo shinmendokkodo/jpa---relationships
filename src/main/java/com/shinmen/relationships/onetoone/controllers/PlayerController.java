@@ -31,35 +31,34 @@ public class PlayerController {
     private final PlayerProfileService playerProfileService;
 
     @GetMapping
-	public List<Player> allPlayers() {
-		return playerService.allPlayers();	    
-	}
+    public List<Player> allPlayers() {
+        return playerService.allPlayers();
+    }
 
-	@GetMapping("/{id}")
-	public Player getPlayer(@PathVariable int id) throws NotFoundException{
-		return playerService.getPlayer(id);
-	}
+    @GetMapping("/{id}")
+    public Player getPlayer(@PathVariable int id) throws NotFoundException {
+        return playerService.getPlayer(id);
+    }
 
     @PostMapping
-	public Player addPlayer(@RequestBody Player player) {
-    	return playerService.addPlayer(player);
-	}
-    
- 	@DeleteMapping("/{id}")
-	public void deletePlayer(@PathVariable int id) {
-		playerService.deletePlayer(id);
-	}
+    public Player addPlayer(@RequestBody Player player) {
+        return playerService.addPlayer(player);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePlayer(@PathVariable int id) {
+        playerService.deletePlayer(id);
+    }
 
     @PutMapping("/{id}/profiles/{profile_id}")
-    public Player assignDetail(@PathVariable int id, @PathVariable int profile_id) throws NotFoundException {
-    	PlayerProfile profile = playerProfileService.getPlayerProfile(profile_id); 
-    	System.out.println(profile);
-    	return playerService.assignProfile(id, profile);
+    public Player assignProfile(@PathVariable int id, @PathVariable int profile_id) throws NotFoundException {
+        PlayerProfile profile = playerProfileService.getPlayerProfile(profile_id);
+        return playerService.assignProfile(id, profile);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException notFoundException) {
         return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.NOT_FOUND);
     }
-    
+
 }
